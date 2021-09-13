@@ -26,7 +26,7 @@ namespace fuzz {
 class TransformationReplaceLoadStoreWithCopyMemory : public Transformation {
  public:
   explicit TransformationReplaceLoadStoreWithCopyMemory(
-      const protobufs::TransformationReplaceLoadStoreWithCopyMemory& message);
+      protobufs::TransformationReplaceLoadStoreWithCopyMemory message);
 
   TransformationReplaceLoadStoreWithCopyMemory(
       const protobufs::InstructionDescriptor& load_instruction_descriptor,
@@ -63,6 +63,8 @@ class TransformationReplaceLoadStoreWithCopyMemory : public Transformation {
   // across memory barriers.
   static bool IsStorageClassSafeAcrossMemoryBarriers(
       SpvStorageClass storage_class);
+
+  std::unordered_set<uint32_t> GetFreshIds() const override;
 
   protobufs::Transformation ToMessage() const override;
 

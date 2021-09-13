@@ -31,8 +31,6 @@ FuzzerPassOutlineFunctions::FuzzerPassOutlineFunctions(
     : FuzzerPass(ir_context, transformation_context, fuzzer_context,
                  transformations) {}
 
-FuzzerPassOutlineFunctions::~FuzzerPassOutlineFunctions() = default;
-
 void FuzzerPassOutlineFunctions::Apply() {
   std::vector<opt::Function*> original_functions;
   for (auto& function : *GetIRContext()->module()) {
@@ -107,8 +105,8 @@ void FuzzerPassOutlineFunctions::Apply() {
         GetFuzzerContext()->GetFreshId(),
         /*new_caller_result_id*/ GetFuzzerContext()->GetFreshId(),
         /*new_callee_result_id*/ GetFuzzerContext()->GetFreshId(),
-        /*input_id_to_fresh_id*/ std::move(input_id_to_fresh_id),
-        /*output_id_to_fresh_id*/ std::move(output_id_to_fresh_id));
+        /*input_id_to_fresh_id*/ input_id_to_fresh_id,
+        /*output_id_to_fresh_id*/ output_id_to_fresh_id);
     MaybeApplyTransformation(transformation);
   }
 }

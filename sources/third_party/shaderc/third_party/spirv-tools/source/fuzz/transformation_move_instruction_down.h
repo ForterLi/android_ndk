@@ -26,7 +26,7 @@ namespace fuzz {
 class TransformationMoveInstructionDown : public Transformation {
  public:
   explicit TransformationMoveInstructionDown(
-      const protobufs::TransformationMoveInstructionDown& message);
+      protobufs::TransformationMoveInstructionDown message);
 
   explicit TransformationMoveInstructionDown(
       const protobufs::InstructionDescriptor& instruction);
@@ -45,6 +45,8 @@ class TransformationMoveInstructionDown : public Transformation {
   // Swaps |instruction| with its successor.
   void Apply(opt::IRContext* ir_context,
              TransformationContext* transformation_context) const override;
+
+  std::unordered_set<uint32_t> GetFreshIds() const override;
 
   protobufs::Transformation ToMessage() const override;
 

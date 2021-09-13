@@ -1,4 +1,39 @@
 
+build 7414587
+Drop python2 support, scripts are tested on python3.8 and python3.9.
+Refactor debug unwinding:
+  1. Add --keep-failed-unwinding-result and --keep-failed-unwinding-stack options
+     in record cmd, to generate additional records for failed unwinding cases.
+  2. Refactor debug-unwind cmd and debug_unwind_reporter.py to report failed
+     unwinding cases.
+Support recording and converting kernel ETM data in record cmd and inject cmd.
+Support using proguard mapping file for reporting.
+Support vmlinux file when building binary_cache.
+Support showing disassembly of vmlinux file in report_html.py. Use multithreading
+to speedup disassembling.
+Add app_type, android_sdk_version and android_build_type in meta_info of recording file.
+
+
+ndk r23
+build 7173446
+Add visualization tool purgatorio.
+Switch to llvm-objdump and llvm-readelf.
+
+build 7119240
+Reduce prepare recording time.
+Add --kprobe option in record cmd.
+Add --cpu option in report cmd.
+Add -i option in dump cmd.
+Add --exclude-perf option in inject cmd.
+Add merge cmd to merge recording files recorded in the same environment using
+the same event types.
+Add monitor cmd to record and report events in real time.
+Fix a few bugs about symbolization of kernel and kernel modules.
+Support parsing kernel etm data in inject cmd.
+Add --show-execution-type option in report-sample cmd.
+Don't hide art jni methods in report_lib and report-sample cmd.
+
+
 build 6859468
 Add --csv option in report cmd.
 Add --sort option in stat cmd.

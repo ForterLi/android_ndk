@@ -28,7 +28,7 @@ namespace fuzz {
 class TransformationAccessChain : public Transformation {
  public:
   explicit TransformationAccessChain(
-      const protobufs::TransformationAccessChain& message);
+      protobufs::TransformationAccessChain message);
 
   TransformationAccessChain(
       uint32_t fresh_id, uint32_t pointer_id,
@@ -75,6 +75,8 @@ class TransformationAccessChain : public Transformation {
   // pointee value is also recorded.
   void Apply(opt::IRContext* ir_context,
              TransformationContext* transformation_context) const override;
+
+  std::unordered_set<uint32_t> GetFreshIds() const override;
 
   protobufs::Transformation ToMessage() const override;
 

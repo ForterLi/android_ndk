@@ -26,7 +26,7 @@ namespace fuzz {
 class TransformationPushIdThroughVariable : public Transformation {
  public:
   explicit TransformationPushIdThroughVariable(
-      const protobufs::TransformationPushIdThroughVariable& message);
+      protobufs::TransformationPushIdThroughVariable message);
 
   TransformationPushIdThroughVariable(
       uint32_t value_id, uint32_t value_synonym_fresh_id,
@@ -52,9 +52,11 @@ class TransformationPushIdThroughVariable : public Transformation {
 
   // Stores |value_id| to |variable_id|, loads |variable_id| to
   // |value_synonym_id|. Adds the fact that |value_synonym_id| and |value_id|
-  // are synonymous if |value_id| is not irrelevant.
+  // are synonymous if |value_id| and |value_synonym_id| are not irrelevant.
   void Apply(opt::IRContext* ir_context,
              TransformationContext* transformation_context) const override;
+
+  std::unordered_set<uint32_t> GetFreshIds() const override;
 
   protobufs::Transformation ToMessage() const override;
 

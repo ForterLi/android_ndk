@@ -28,13 +28,17 @@ FuzzerPassAddBitInstructionSynonyms::FuzzerPassAddBitInstructionSynonyms(
     : FuzzerPass(ir_context, transformation_context, fuzzer_context,
                  transformations) {}
 
-FuzzerPassAddBitInstructionSynonyms::~FuzzerPassAddBitInstructionSynonyms() =
-    default;
-
 void FuzzerPassAddBitInstructionSynonyms::Apply() {
   for (auto& function : *GetIRContext()->module()) {
     for (auto& block : function) {
       for (auto& instruction : block) {
+        // This fuzzer pass can add a *lot* of ids.  We bail out early if we hit
+        // the recommended id limit.
+        if (GetIRContext()->module()->id_bound() >=
+            GetFuzzerContext()->GetIdBoundLimit()) {
+          return;
+        }
+
         // Randomly decides whether the transformation will be applied.
         if (!GetFuzzerContext()->ChoosePercentage(
                 GetFuzzerContext()->GetChanceOfAddingBitInstructionSynonym())) {
@@ -47,7 +51,8 @@ void FuzzerPassAddBitInstructionSynonyms::Apply() {
         //  |spvOpcodeIsBit|.
         if (instruction.opcode() != SpvOpBitwiseOr &&
             instruction.opcode() != SpvOpBitwiseXor &&
-            instruction.opcode() != SpvOpBitwiseAnd) {
+            instruction.opcode() != SpvOpBitwiseAnd &&
+            instruction.opcode() != SpvOpNot) {
           continue;
         }
 

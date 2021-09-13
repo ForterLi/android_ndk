@@ -33,9 +33,6 @@ FuzzerPassAddLoopsToCreateIntConstantSynonyms::
     : FuzzerPass(ir_context, transformation_context, fuzzer_context,
                  transformations) {}
 
-FuzzerPassAddLoopsToCreateIntConstantSynonyms::
-    ~FuzzerPassAddLoopsToCreateIntConstantSynonyms() = default;
-
 void FuzzerPassAddLoopsToCreateIntConstantSynonyms::Apply() {
   std::vector<uint32_t> constants;
 
@@ -49,6 +46,12 @@ void FuzzerPassAddLoopsToCreateIntConstantSynonyms::Apply() {
 
     auto constant = GetIRContext()->get_constant_mgr()->FindDeclaredConstant(
         constant_def->result_id());
+
+    // We do not consider irrelevant constants
+    if (GetTransformationContext()->GetFactManager()->IdIsIrrelevant(
+            constant_def->result_id())) {
+      continue;
+    }
 
     // We only consider integer constants (scalar or vector).
     if (!constant->AsIntConstant() &&
@@ -66,10 +69,15 @@ void FuzzerPassAddLoopsToCreateIntConstantSynonyms::Apply() {
   // synonym. We cannot apply the transformation while iterating over the
   // module, because we are going to add new blocks.
   for (auto& function : *GetIRContext()->module()) {
-    // Consider all blocks reachable from the first block of the function.
+    // Consider all non-dead blocks reachable from the first block of the
+    // function.
     GetIRContext()->cfg()->ForEachBlockInPostOrder(
-        &*function.begin(),
-        [&blocks](opt::BasicBlock* block) { blocks.push_back(block->id()); });
+        &*function.begin(), [this, &blocks](opt::BasicBlock* block) {
+          if (!GetTransformationContext()->GetFactManager()->BlockIsDead(
+                  block->id())) {
+            blocks.push_back(block->id());
+          }
+        });
   }
 
   // Make sure that the module has an OpTypeBool instruction, and 32-bit signed

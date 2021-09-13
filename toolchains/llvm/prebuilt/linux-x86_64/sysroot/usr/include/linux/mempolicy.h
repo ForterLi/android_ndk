@@ -29,7 +29,8 @@ enum {
 };
 #define MPOL_F_STATIC_NODES (1 << 15)
 #define MPOL_F_RELATIVE_NODES (1 << 14)
-#define MPOL_MODE_FLAGS (MPOL_F_STATIC_NODES | MPOL_F_RELATIVE_NODES)
+#define MPOL_F_NUMA_BALANCING (1 << 13)
+#define MPOL_MODE_FLAGS (MPOL_F_STATIC_NODES | MPOL_F_RELATIVE_NODES | MPOL_F_NUMA_BALANCING)
 #define MPOL_F_NODE (1 << 0)
 #define MPOL_F_ADDR (1 << 1)
 #define MPOL_F_MEMS_ALLOWED (1 << 2)
@@ -43,4 +44,7 @@ enum {
 #define MPOL_F_LOCAL (1 << 1)
 #define MPOL_F_MOF (1 << 3)
 #define MPOL_F_MORON (1 << 4)
+#define RECLAIM_ZONE (1 << 0)
+#define RECLAIM_WRITE (1 << 1)
+#define RECLAIM_UNMAP (1 << 2)
 #endif

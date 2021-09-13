@@ -26,7 +26,7 @@ namespace fuzz {
 class TransformationAddRelaxedDecoration : public Transformation {
  public:
   explicit TransformationAddRelaxedDecoration(
-      const protobufs::TransformationAddRelaxedDecoration& message);
+      protobufs::TransformationAddRelaxedDecoration message);
 
   explicit TransformationAddRelaxedDecoration(uint32_t fresh_id);
 
@@ -44,6 +44,8 @@ class TransformationAddRelaxedDecoration : public Transformation {
   // to the module.
   void Apply(opt::IRContext* ir_context,
              TransformationContext* transformation_context) const override;
+
+  std::unordered_set<uint32_t> GetFreshIds() const override;
 
   protobufs::Transformation ToMessage() const override;
 

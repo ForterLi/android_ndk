@@ -26,9 +26,8 @@ namespace spvtools {
 namespace fuzz {
 
 TransformationReplaceIdWithSynonym::TransformationReplaceIdWithSynonym(
-    const spvtools::fuzz::protobufs::TransformationReplaceIdWithSynonym&
-        message)
-    : message_(message) {}
+    protobufs::TransformationReplaceIdWithSynonym message)
+    : message_(std::move(message)) {}
 
 TransformationReplaceIdWithSynonym::TransformationReplaceIdWithSynonym(
     protobufs::IdUseDescriptor id_use_descriptor, uint32_t synonymous_id) {
@@ -74,7 +73,7 @@ bool TransformationReplaceIdWithSynonym::IsApplicable(
 
   // Is the use suitable for being replaced in principle?
   if (!fuzzerutil::IdUseCanBeReplaced(
-          ir_context, use_instruction,
+          ir_context, transformation_context, use_instruction,
           message_.id_use_descriptor().in_operand_index())) {
     return false;
   }
@@ -95,8 +94,12 @@ void TransformationReplaceIdWithSynonym::Apply(
   instruction_to_change->SetInOperand(
       message_.id_use_descriptor().in_operand_index(),
       {message_.synonymous_id()});
-  ir_context->InvalidateAnalysesExceptFor(
-      opt::IRContext::Analysis::kAnalysisNone);
+  ir_context->get_def_use_mgr()->EraseUseRecordsOfOperandIds(
+      instruction_to_change);
+  ir_context->get_def_use_mgr()->AnalyzeInstUse(instruction_to_change);
+
+  // No analyses need to be invalidated, since the transformation is local to a
+  // block, and the def-use analysis has been updated.
 }
 
 protobufs::Transformation TransformationReplaceIdWithSynonym::ToMessage()
@@ -157,6 +160,11 @@ bool TransformationReplaceIdWithSynonym::TypesAreCompatible(
   return type_id_1 == type_id_2 ||
          (IsAgnosticToSignednessOfOperand(opcode, use_in_operand_index) &&
           fuzzerutil::TypesAreEqualUpToSign(ir_context, type_id_1, type_id_2));
+}
+
+std::unordered_set<uint32_t> TransformationReplaceIdWithSynonym::GetFreshIds()
+    const {
+  return std::unordered_set<uint32_t>();
 }
 
 }  // namespace fuzz

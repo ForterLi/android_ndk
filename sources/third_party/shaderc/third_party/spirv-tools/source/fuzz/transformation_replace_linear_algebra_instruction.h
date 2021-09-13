@@ -26,7 +26,7 @@ namespace fuzz {
 class TransformationReplaceLinearAlgebraInstruction : public Transformation {
  public:
   explicit TransformationReplaceLinearAlgebraInstruction(
-      const protobufs::TransformationReplaceLinearAlgebraInstruction& message);
+      protobufs::TransformationReplaceLinearAlgebraInstruction message);
 
   TransformationReplaceLinearAlgebraInstruction(
       const std::vector<uint32_t>& fresh_ids,
@@ -42,6 +42,8 @@ class TransformationReplaceLinearAlgebraInstruction : public Transformation {
   // Replaces a linear algebra instruction.
   void Apply(opt::IRContext* ir_context,
              TransformationContext* transformation_context) const override;
+
+  std::unordered_set<uint32_t> GetFreshIds() const override;
 
   protobufs::Transformation ToMessage() const override;
 

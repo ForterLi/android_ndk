@@ -21,9 +21,8 @@ namespace fuzz {
 
 TransformationReplaceOpPhiIdFromDeadPredecessor::
     TransformationReplaceOpPhiIdFromDeadPredecessor(
-        const protobufs::TransformationReplaceOpPhiIdFromDeadPredecessor&
-            message)
-    : message_(message) {}
+        protobufs::TransformationReplaceOpPhiIdFromDeadPredecessor message)
+    : message_(std::move(message)) {}
 
 TransformationReplaceOpPhiIdFromDeadPredecessor::
     TransformationReplaceOpPhiIdFromDeadPredecessor(uint32_t opphi_id,
@@ -104,6 +103,11 @@ TransformationReplaceOpPhiIdFromDeadPredecessor::ToMessage() const {
   protobufs::Transformation result;
   *result.mutable_replace_opphi_id_from_dead_predecessor() = message_;
   return result;
+}
+
+std::unordered_set<uint32_t>
+TransformationReplaceOpPhiIdFromDeadPredecessor::GetFreshIds() const {
+  return std::unordered_set<uint32_t>();
 }
 
 }  // namespace fuzz

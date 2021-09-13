@@ -20,9 +20,8 @@ namespace spvtools {
 namespace fuzz {
 TransformationReplaceOpSelectWithConditionalBranch::
     TransformationReplaceOpSelectWithConditionalBranch(
-        const spvtools::fuzz::protobufs::
-            TransformationReplaceOpSelectWithConditionalBranch& message)
-    : message_(message) {}
+        protobufs::TransformationReplaceOpSelectWithConditionalBranch message)
+    : message_(std::move(message)) {}
 
 TransformationReplaceOpSelectWithConditionalBranch::
     TransformationReplaceOpSelectWithConditionalBranch(
@@ -198,6 +197,11 @@ TransformationReplaceOpSelectWithConditionalBranch::ToMessage() const {
   protobufs::Transformation result;
   *result.mutable_replace_opselect_with_conditional_branch() = message_;
   return result;
+}
+
+std::unordered_set<uint32_t>
+TransformationReplaceOpSelectWithConditionalBranch::GetFreshIds() const {
+  return {message_.true_block_id(), message_.false_block_id()};
 }
 
 }  // namespace fuzz

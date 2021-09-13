@@ -18,7 +18,7 @@
  ****************************************************************************/
 #ifndef _UAPI__LINUX_NETLINK_H
 #define _UAPI__LINUX_NETLINK_H
-#include <linux/kernel.h>
+#include <linux/const.h>
 #include <linux/socket.h>
 #include <linux/types.h>
 #define NETLINK_ROUTE 0
@@ -98,6 +98,7 @@ enum nlmsgerr_attrs {
   NLMSGERR_ATTR_MSG,
   NLMSGERR_ATTR_OFFS,
   NLMSGERR_ATTR_COOKIE,
+  NLMSGERR_ATTR_POLICY,
   __NLMSGERR_ATTR_MAX,
   NLMSGERR_ATTR_MAX = __NLMSGERR_ATTR_MAX - 1
 };
@@ -190,6 +191,7 @@ enum netlink_policy_type_attr {
   NL_POLICY_TYPE_ATTR_POLICY_MAXTYPE,
   NL_POLICY_TYPE_ATTR_BITFIELD32_MASK,
   NL_POLICY_TYPE_ATTR_PAD,
+  NL_POLICY_TYPE_ATTR_MASK,
   __NL_POLICY_TYPE_ATTR_MAX,
   NL_POLICY_TYPE_ATTR_MAX = __NL_POLICY_TYPE_ATTR_MAX - 1
 };

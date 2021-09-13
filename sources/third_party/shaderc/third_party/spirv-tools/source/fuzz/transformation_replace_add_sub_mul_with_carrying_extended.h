@@ -27,8 +27,7 @@ class TransformationReplaceAddSubMulWithCarryingExtended
     : public Transformation {
  public:
   explicit TransformationReplaceAddSubMulWithCarryingExtended(
-      const protobufs::TransformationReplaceAddSubMulWithCarryingExtended&
-          message);
+      protobufs::TransformationReplaceAddSubMulWithCarryingExtended message);
 
   explicit TransformationReplaceAddSubMulWithCarryingExtended(
       uint32_t struct_fresh_id, uint32_t result_id);
@@ -51,6 +50,8 @@ class TransformationReplaceAddSubMulWithCarryingExtended
   // original result.
   void Apply(opt::IRContext* ir_context,
              TransformationContext* transformation_context) const override;
+
+  std::unordered_set<uint32_t> GetFreshIds() const override;
 
   protobufs::Transformation ToMessage() const override;
 

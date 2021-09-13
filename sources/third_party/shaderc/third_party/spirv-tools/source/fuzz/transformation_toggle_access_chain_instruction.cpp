@@ -22,9 +22,8 @@ namespace fuzz {
 
 TransformationToggleAccessChainInstruction::
     TransformationToggleAccessChainInstruction(
-        const spvtools::fuzz::protobufs::
-            TransformationToggleAccessChainInstruction& message)
-    : message_(message) {}
+        protobufs::TransformationToggleAccessChainInstruction message)
+    : message_(std::move(message)) {}
 
 TransformationToggleAccessChainInstruction::
     TransformationToggleAccessChainInstruction(
@@ -75,6 +74,11 @@ TransformationToggleAccessChainInstruction::ToMessage() const {
   protobufs::Transformation result;
   *result.mutable_toggle_access_chain_instruction() = message_;
   return result;
+}
+
+std::unordered_set<uint32_t>
+TransformationToggleAccessChainInstruction::GetFreshIds() const {
+  return std::unordered_set<uint32_t>();
 }
 
 }  // namespace fuzz

@@ -31,9 +31,6 @@ FuzzerPassReplaceOpSelectsWithConditionalBranches::
     : FuzzerPass(ir_context, transformation_context, fuzzer_context,
                  transformations) {}
 
-FuzzerPassReplaceOpSelectsWithConditionalBranches::
-    ~FuzzerPassReplaceOpSelectsWithConditionalBranches() = default;
-
 void FuzzerPassReplaceOpSelectsWithConditionalBranches::Apply() {
   // Keep track of the instructions that we want to replace. We need to collect
   // them in a vector, since it's not safe to modify the module while iterating
@@ -62,6 +59,16 @@ void FuzzerPassReplaceOpSelectsWithConditionalBranches::Apply() {
         if (!GetFuzzerContext()->ChoosePercentage(
                 GetFuzzerContext()
                     ->GetChanceOfReplacingOpselectWithConditionalBranch())) {
+          continue;
+        }
+
+        // If the selector does not have scalar boolean type (i.e., it is a
+        // boolean vector) then ignore this OpSelect.
+        if (GetIRContext()
+                ->get_def_use_mgr()
+                ->GetDef(fuzzerutil::GetTypeId(
+                    GetIRContext(), instruction.GetSingleWordInOperand(0)))
+                ->opcode() != SpvOpTypeBool) {
           continue;
         }
 

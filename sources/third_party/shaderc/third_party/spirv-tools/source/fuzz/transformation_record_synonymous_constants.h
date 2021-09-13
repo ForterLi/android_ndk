@@ -24,7 +24,7 @@ namespace fuzz {
 class TransformationRecordSynonymousConstants : public Transformation {
  public:
   explicit TransformationRecordSynonymousConstants(
-      const protobufs::TransformationRecordSynonymousConstants& message);
+      protobufs::TransformationRecordSynonymousConstants message);
 
   TransformationRecordSynonymousConstants(uint32_t constant1_id,
                                           uint32_t constant2_id);
@@ -51,6 +51,8 @@ class TransformationRecordSynonymousConstants : public Transformation {
   // are synonyms to the fact manager. The module is not changed.
   void Apply(opt::IRContext* ir_context,
              TransformationContext* transformation_context) const override;
+
+  std::unordered_set<uint32_t> GetFreshIds() const override;
 
   protobufs::Transformation ToMessage() const override;
 

@@ -23,9 +23,8 @@ namespace fuzz {
 
 TransformationPermuteFunctionParameters::
     TransformationPermuteFunctionParameters(
-        const spvtools::fuzz::protobufs::
-            TransformationPermuteFunctionParameters& message)
-    : message_(message) {}
+        protobufs::TransformationPermuteFunctionParameters message)
+    : message_(std::move(message)) {}
 
 TransformationPermuteFunctionParameters::
     TransformationPermuteFunctionParameters(
@@ -159,6 +158,11 @@ protobufs::Transformation TransformationPermuteFunctionParameters::ToMessage()
   protobufs::Transformation result;
   *result.mutable_permute_function_parameters() = message_;
   return result;
+}
+
+std::unordered_set<uint32_t>
+TransformationPermuteFunctionParameters::GetFreshIds() const {
+  return {message_.function_type_fresh_id()};
 }
 
 }  // namespace fuzz

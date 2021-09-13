@@ -15,6 +15,7 @@ include $(PREBUILT_STATIC_LIBRARY)
 else # Building
 
 android_support_cflags := \
+    -D_GNU_SOURCE \
     -Drestrict=__restrict__ \
     -ffunction-sections \
     -fdata-sections \
@@ -122,7 +123,7 @@ LOCAL_ARM_NEON := false
 
 LOCAL_CPPFLAGS := \
     -fvisibility-inlines-hidden \
-    -std=c++11 \
+    -std=gnu++11 \
 
 include $(BUILD_STATIC_LIBRARY)
 

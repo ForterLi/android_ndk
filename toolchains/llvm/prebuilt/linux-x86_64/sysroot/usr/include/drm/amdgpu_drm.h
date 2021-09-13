@@ -411,6 +411,7 @@ struct drm_amdgpu_cs_chunk_data {
 };
 #define AMDGPU_IDS_FLAGS_FUSION 0x1
 #define AMDGPU_IDS_FLAGS_PREEMPTION 0x2
+#define AMDGPU_IDS_FLAGS_TMZ 0x4
 #define AMDGPU_INFO_ACCEL_WORKING 0x00
 #define AMDGPU_INFO_CRTC_FROM_ID 0x01
 #define AMDGPU_INFO_HW_IP_INFO 0x02
@@ -436,6 +437,7 @@ struct drm_amdgpu_cs_chunk_data {
 #define AMDGPU_INFO_FW_DMCU 0x12
 #define AMDGPU_INFO_FW_TA 0x13
 #define AMDGPU_INFO_FW_DMCUB 0x14
+#define AMDGPU_INFO_FW_TOC 0x15
 #define AMDGPU_INFO_NUM_BYTES_MOVED 0x0f
 #define AMDGPU_INFO_VRAM_USAGE 0x10
 #define AMDGPU_INFO_GTT_USAGE 0x11
@@ -464,6 +466,9 @@ struct drm_amdgpu_cs_chunk_data {
 #define AMDGPU_INFO_NUM_VRAM_CPU_PAGE_FAULTS 0x1E
 #define AMDGPU_INFO_VRAM_LOST_COUNTER 0x1F
 #define AMDGPU_INFO_RAS_ENABLED_FEATURES 0x20
+#define AMDGPU_INFO_VIDEO_CAPS 0x21
+#define AMDGPU_INFO_VIDEO_CAPS_DECODE 0
+#define AMDGPU_INFO_VIDEO_CAPS_ENCODE 1
 #define AMDGPU_INFO_RAS_ENABLED_UMC (1 << 0)
 #define AMDGPU_INFO_RAS_ENABLED_SDMA (1 << 1)
 #define AMDGPU_INFO_RAS_ENABLED_GFX (1 << 2)
@@ -515,6 +520,9 @@ struct drm_amdgpu_info {
     struct {
       __u32 type;
     } sensor_info;
+    struct {
+      __u32 type;
+    } video_cap;
   };
 };
 struct drm_amdgpu_info_gds {
@@ -557,6 +565,7 @@ struct drm_amdgpu_info_firmware {
 #define AMDGPU_VRAM_TYPE_DDR3 7
 #define AMDGPU_VRAM_TYPE_DDR4 8
 #define AMDGPU_VRAM_TYPE_GDDR6 9
+#define AMDGPU_VRAM_TYPE_DDR5 10
 struct drm_amdgpu_info_device {
   __u32 device_id;
   __u32 chip_rev;
@@ -633,6 +642,26 @@ struct drm_amdgpu_info_vce_clock_table {
   __u32 num_valid_entries;
   __u32 pad;
 };
+#define AMDGPU_INFO_VIDEO_CAPS_CODEC_IDX_MPEG2 0
+#define AMDGPU_INFO_VIDEO_CAPS_CODEC_IDX_MPEG4 1
+#define AMDGPU_INFO_VIDEO_CAPS_CODEC_IDX_VC1 2
+#define AMDGPU_INFO_VIDEO_CAPS_CODEC_IDX_MPEG4_AVC 3
+#define AMDGPU_INFO_VIDEO_CAPS_CODEC_IDX_HEVC 4
+#define AMDGPU_INFO_VIDEO_CAPS_CODEC_IDX_JPEG 5
+#define AMDGPU_INFO_VIDEO_CAPS_CODEC_IDX_VP9 6
+#define AMDGPU_INFO_VIDEO_CAPS_CODEC_IDX_AV1 7
+#define AMDGPU_INFO_VIDEO_CAPS_CODEC_IDX_COUNT 8
+struct drm_amdgpu_info_video_codec_info {
+  __u32 valid;
+  __u32 max_width;
+  __u32 max_height;
+  __u32 max_pixels_per_frame;
+  __u32 max_level;
+  __u32 pad;
+};
+struct drm_amdgpu_info_video_caps {
+  struct drm_amdgpu_info_video_codec_info codec_info[AMDGPU_INFO_VIDEO_CAPS_CODEC_IDX_COUNT];
+};
 #define AMDGPU_FAMILY_UNKNOWN 0
 #define AMDGPU_FAMILY_SI 110
 #define AMDGPU_FAMILY_CI 120
@@ -642,6 +671,7 @@ struct drm_amdgpu_info_vce_clock_table {
 #define AMDGPU_FAMILY_AI 141
 #define AMDGPU_FAMILY_RV 142
 #define AMDGPU_FAMILY_NV 143
+#define AMDGPU_FAMILY_VGH 144
 #ifdef __cplusplus
 }
 #endif

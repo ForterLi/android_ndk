@@ -22,9 +22,8 @@ namespace fuzz {
 
 TransformationReplaceLinearAlgebraInstruction::
     TransformationReplaceLinearAlgebraInstruction(
-        const spvtools::fuzz::protobufs::
-            TransformationReplaceLinearAlgebraInstruction& message)
-    : message_(message) {}
+        protobufs::TransformationReplaceLinearAlgebraInstruction message)
+    : message_(std::move(message)) {}
 
 TransformationReplaceLinearAlgebraInstruction::
     TransformationReplaceLinearAlgebraInstruction(
@@ -1026,6 +1025,15 @@ void TransformationReplaceLinearAlgebraInstruction::ReplaceOpDot(
     linear_algebra_instruction->SetInOperand(
         1, {float_add_ids[float_add_ids.size() - 1]});
   }
+}
+
+std::unordered_set<uint32_t>
+TransformationReplaceLinearAlgebraInstruction::GetFreshIds() const {
+  std::unordered_set<uint32_t> result;
+  for (auto id : message_.fresh_ids()) {
+    result.insert(id);
+  }
+  return result;
 }
 
 }  // namespace fuzz

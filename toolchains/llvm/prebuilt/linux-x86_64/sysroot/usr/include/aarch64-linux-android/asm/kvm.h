@@ -97,7 +97,13 @@ struct kvm_debug_exit_arch {
 struct kvm_sync_regs {
   __u64 device_irq_level;
 };
-struct kvm_arch_memory_slot {
+struct kvm_pmu_event_filter {
+  __u16 base_event;
+  __u16 nevents;
+#define KVM_PMU_EVENT_ALLOW 0
+#define KVM_PMU_EVENT_DENY 1
+  __u8 action;
+  __u8 pad[3];
 };
 struct kvm_vcpu_events {
   struct {
@@ -194,6 +200,7 @@ struct kvm_vcpu_events {
 #define KVM_ARM_VCPU_PMU_V3_CTRL 0
 #define KVM_ARM_VCPU_PMU_V3_IRQ 0
 #define KVM_ARM_VCPU_PMU_V3_INIT 1
+#define KVM_ARM_VCPU_PMU_V3_FILTER 2
 #define KVM_ARM_VCPU_TIMER_CTRL 1
 #define KVM_ARM_VCPU_TIMER_IRQ_VTIMER 0
 #define KVM_ARM_VCPU_TIMER_IRQ_PTIMER 1

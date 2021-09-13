@@ -19,12 +19,10 @@
 #include "source/fuzz/protobufs/spirvfuzz_protobufs.h"
 #include "source/fuzz/transformation_context.h"
 #include "source/fuzz/transformation_replace_constant_with_uniform.h"
-#include "source/fuzz/uniform_buffer_element_descriptor.h"
 #include "source/opt/build_module.h"
 #include "source/opt/ir_context.h"
 #include "source/opt/types.h"
 #include "source/util/make_unique.h"
-#include "tools/util/cli_consumer.h"
 
 namespace spvtools {
 namespace fuzz {
@@ -160,8 +158,8 @@ bool ForceRenderRed(
     const spv_target_env& target_env, spv_validator_options validator_options,
     const std::vector<uint32_t>& binary_in,
     const spvtools::fuzz::protobufs::FactSequence& initial_facts,
+    const MessageConsumer& message_consumer,
     std::vector<uint32_t>* binary_out) {
-  auto message_consumer = spvtools::utils::CLIMessageConsumer;
   spvtools::SpirvTools tools(target_env);
   if (!tools.IsValid()) {
     message_consumer(SPV_MSG_ERROR, nullptr, {},
@@ -182,12 +180,11 @@ bool ForceRenderRed(
   assert(ir_context);
 
   // Set up a fact manager with any given initial facts.
-  FactManager fact_manager(ir_context.get());
+  TransformationContext transformation_context(
+      MakeUnique<FactManager>(ir_context.get()), validator_options);
   for (auto& fact : initial_facts.fact()) {
-    fact_manager.AddFact(fact);
+    transformation_context.GetFactManager()->MaybeAddFact(fact);
   }
-  TransformationContext transformation_context(&fact_manager,
-                                               validator_options);
 
   auto entry_point_function =
       FindFragmentShaderEntryPoint(ir_context.get(), message_consumer);
@@ -264,7 +261,8 @@ bool ForceRenderRed(
 
     auto float_type_id = ir_context->get_type_mgr()->GetId(float_type);
     auto types_for_which_uniforms_are_known =
-        fact_manager.GetTypesForWhichUniformValuesAreKnown();
+        transformation_context.GetFactManager()
+            ->GetTypesForWhichUniformValuesAreKnown();
 
     // Check whether we have any float uniforms.
     if (std::find(types_for_which_uniforms_are_known.begin(),
@@ -273,7 +271,8 @@ bool ForceRenderRed(
       // We have at least one float uniform; let's see whether we have at least
       // two.
       auto available_constants =
-          fact_manager.GetConstantsAvailableFromUniformsForType(float_type_id);
+          transformation_context.GetFactManager()
+              ->GetConstantsAvailableFromUniformsForType(float_type_id);
       if (available_constants.size() > 1) {
         // Grab the float constants associated with the first two known float
         // uniforms.
@@ -319,13 +318,13 @@ bool ForceRenderRed(
               id_guaranteed_to_be_false, greater_than_operands));
 
           first_greater_then_operand_replacement =
-              MakeConstantUniformReplacement(ir_context.get(), fact_manager,
-                                             smaller_constant,
-                                             id_guaranteed_to_be_false, 0);
+              MakeConstantUniformReplacement(
+                  ir_context.get(), *transformation_context.GetFactManager(),
+                  smaller_constant, id_guaranteed_to_be_false, 0);
           second_greater_then_operand_replacement =
-              MakeConstantUniformReplacement(ir_context.get(), fact_manager,
-                                             larger_constant,
-                                             id_guaranteed_to_be_false, 1);
+              MakeConstantUniformReplacement(
+                  ir_context.get(), *transformation_context.GetFactManager(),
+                  larger_constant, id_guaranteed_to_be_false, 1);
         }
       }
     }

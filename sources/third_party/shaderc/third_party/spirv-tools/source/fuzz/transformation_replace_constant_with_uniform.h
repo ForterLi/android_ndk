@@ -28,7 +28,7 @@ namespace fuzz {
 class TransformationReplaceConstantWithUniform : public Transformation {
  public:
   explicit TransformationReplaceConstantWithUniform(
-      const protobufs::TransformationReplaceConstantWithUniform& message);
+      protobufs::TransformationReplaceConstantWithUniform message);
 
   TransformationReplaceConstantWithUniform(
       protobufs::IdUseDescriptor id_use,
@@ -70,6 +70,8 @@ class TransformationReplaceConstantWithUniform : public Transformation {
   //   |message_.fresh_id_for_load|
   void Apply(opt::IRContext* ir_context,
              TransformationContext* transformation_context) const override;
+
+  std::unordered_set<uint32_t> GetFreshIds() const override;
 
   protobufs::Transformation ToMessage() const override;
 

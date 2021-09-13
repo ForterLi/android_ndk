@@ -26,7 +26,7 @@ namespace fuzz {
 class TransformationReplaceCopyMemoryWithLoadStore : public Transformation {
  public:
   explicit TransformationReplaceCopyMemoryWithLoadStore(
-      const protobufs::TransformationReplaceCopyMemoryWithLoadStore& message);
+      protobufs::TransformationReplaceCopyMemoryWithLoadStore message);
 
   TransformationReplaceCopyMemoryWithLoadStore(
       uint32_t fresh_id, const protobufs::InstructionDescriptor&
@@ -44,6 +44,8 @@ class TransformationReplaceCopyMemoryWithLoadStore : public Transformation {
   // original OpCopyMemory instruction.
   void Apply(opt::IRContext* ir_context,
              TransformationContext* transformation_context) const override;
+
+  std::unordered_set<uint32_t> GetFreshIds() const override;
 
   protobufs::Transformation ToMessage() const override;
 

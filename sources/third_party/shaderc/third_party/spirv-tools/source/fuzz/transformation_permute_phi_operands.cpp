@@ -22,8 +22,8 @@ namespace spvtools {
 namespace fuzz {
 
 TransformationPermutePhiOperands::TransformationPermutePhiOperands(
-    const spvtools::fuzz::protobufs::TransformationPermutePhiOperands& message)
-    : message_(message) {}
+    protobufs::TransformationPermutePhiOperands message)
+    : message_(std::move(message)) {}
 
 TransformationPermutePhiOperands::TransformationPermutePhiOperands(
     uint32_t result_id, const std::vector<uint32_t>& permutation) {
@@ -80,15 +80,20 @@ void TransformationPermutePhiOperands::Apply(
 
   inst->SetInOperands(std::move(permuted_operands));
 
-  // Make sure our changes are analyzed
-  ir_context->InvalidateAnalysesExceptFor(
-      opt::IRContext::Analysis::kAnalysisNone);
+  // Update the def-use manager.
+  ir_context->get_def_use_mgr()->ClearInst(inst);
+  ir_context->get_def_use_mgr()->AnalyzeInstDefUse(inst);
 }
 
 protobufs::Transformation TransformationPermutePhiOperands::ToMessage() const {
   protobufs::Transformation result;
   *result.mutable_permute_phi_operands() = message_;
   return result;
+}
+
+std::unordered_set<uint32_t> TransformationPermutePhiOperands::GetFreshIds()
+    const {
+  return std::unordered_set<uint32_t>();
 }
 
 }  // namespace fuzz

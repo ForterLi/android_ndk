@@ -30,9 +30,6 @@ FuzzerPassReplaceCopyObjectsWithStoresLoads::
     : FuzzerPass(ir_context, transformation_context, fuzzer_context,
                  transformations) {}
 
-FuzzerPassReplaceCopyObjectsWithStoresLoads::
-    ~FuzzerPassReplaceCopyObjectsWithStoresLoads() = default;
-
 void FuzzerPassReplaceCopyObjectsWithStoresLoads::Apply() {
   GetIRContext()->module()->ForEachInst([this](opt::Instruction* instruction) {
     // Randomly decide whether to replace OpCopyObject.
@@ -69,9 +66,8 @@ void FuzzerPassReplaceCopyObjectsWithStoresLoads::Apply() {
     // Find or create a constant to initialize the variable from. The type of
     // |instruction| must be such that the function FindOrCreateConstant can be
     // called.
-    auto instruction_type =
-        GetIRContext()->get_type_mgr()->GetType(instruction->type_id());
-    if (!fuzzerutil::CanCreateConstant(*instruction_type)) {
+    if (!fuzzerutil::CanCreateConstant(GetIRContext(),
+                                       instruction->type_id())) {
       return;
     }
     auto variable_initializer_id =

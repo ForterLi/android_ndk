@@ -19,8 +19,8 @@
 namespace spvtools {
 namespace fuzz {
 TransformationAddOpPhiSynonym::TransformationAddOpPhiSynonym(
-    const protobufs::TransformationAddOpPhiSynonym& message)
-    : message_(message) {}
+    protobufs::TransformationAddOpPhiSynonym message)
+    : message_(std::move(message)) {}
 
 TransformationAddOpPhiSynonym::TransformationAddOpPhiSynonym(
     uint32_t block_id, const std::map<uint32_t, uint32_t>& preds_to_ids,
@@ -34,9 +34,11 @@ TransformationAddOpPhiSynonym::TransformationAddOpPhiSynonym(
 bool TransformationAddOpPhiSynonym::IsApplicable(
     opt::IRContext* ir_context,
     const TransformationContext& transformation_context) const {
-  // Check that |message_.block_id| is a block label id.
+  // Check that |message_.block_id| is a block label id, and that it is not
+  // dead.
   auto block = fuzzerutil::MaybeFindBlock(ir_context, message_.block_id());
-  if (!block) {
+  if (!block ||
+      transformation_context.GetFactManager()->BlockIsDead(block->id())) {
     return false;
   }
 
@@ -191,6 +193,11 @@ bool TransformationAddOpPhiSynonym::CheckTypeIsAllowed(
 
   // We do not allow other types.
   return false;
+}
+
+std::unordered_set<uint32_t> TransformationAddOpPhiSynonym::GetFreshIds()
+    const {
+  return {message_.fresh_id()};
 }
 
 }  // namespace fuzz

@@ -28,8 +28,6 @@ FuzzerPassAddDeadContinues::FuzzerPassAddDeadContinues(
     : FuzzerPass(ir_context, transformation_context, fuzzer_context,
                  transformations) {}
 
-FuzzerPassAddDeadContinues::~FuzzerPassAddDeadContinues() = default;
-
 void FuzzerPassAddDeadContinues::Apply() {
   // Consider every block in every function.
   for (auto& function : *GetIRContext()->module()) {
@@ -58,11 +56,15 @@ void FuzzerPassAddDeadContinues::Apply() {
       // If this is the case, we don't need to do anything.
       if (!block.IsSuccessor(continue_block)) {
         continue_block->ForEachPhiInst([this, &phi_ids](opt::Instruction* phi) {
-          // Add an additional operand for OpPhi instruction.
-          //
-          // We mark the constant as irrelevant so that we can replace it with a
-          // more interesting value later.
-          phi_ids.push_back(FindOrCreateZeroConstant(phi->type_id(), true));
+          // Add an additional operand for OpPhi instruction.  Use a constant
+          // if possible, and an undef otherwise.
+          if (fuzzerutil::CanCreateConstant(GetIRContext(), phi->type_id())) {
+            // We mark the constant as irrelevant so that we can replace it with
+            // a more interesting value later.
+            phi_ids.push_back(FindOrCreateZeroConstant(phi->type_id(), true));
+          } else {
+            phi_ids.push_back(FindOrCreateGlobalUndef(phi->type_id()));
+          }
         });
       }
 

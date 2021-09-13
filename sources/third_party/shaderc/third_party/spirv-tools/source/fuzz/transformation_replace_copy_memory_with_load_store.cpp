@@ -22,9 +22,8 @@ namespace fuzz {
 
 TransformationReplaceCopyMemoryWithLoadStore::
     TransformationReplaceCopyMemoryWithLoadStore(
-        const spvtools::fuzz::protobufs::
-            TransformationReplaceCopyMemoryWithLoadStore& message)
-    : message_(message) {}
+        protobufs::TransformationReplaceCopyMemoryWithLoadStore message)
+    : message_(std::move(message)) {}
 
 TransformationReplaceCopyMemoryWithLoadStore::
     TransformationReplaceCopyMemoryWithLoadStore(
@@ -121,6 +120,11 @@ TransformationReplaceCopyMemoryWithLoadStore::ToMessage() const {
   protobufs::Transformation result;
   *result.mutable_replace_copy_memory_with_load_store() = message_;
   return result;
+}
+
+std::unordered_set<uint32_t>
+TransformationReplaceCopyMemoryWithLoadStore::GetFreshIds() const {
+  return {message_.fresh_id()};
 }
 
 }  // namespace fuzz

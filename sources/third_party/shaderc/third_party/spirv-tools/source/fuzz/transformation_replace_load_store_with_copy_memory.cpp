@@ -29,9 +29,8 @@ const uint32_t kOpLoadOperandIndexSourceVariable = 2;
 
 TransformationReplaceLoadStoreWithCopyMemory::
     TransformationReplaceLoadStoreWithCopyMemory(
-        const spvtools::fuzz::protobufs::
-            TransformationReplaceLoadStoreWithCopyMemory& message)
-    : message_(message) {}
+        protobufs::TransformationReplaceLoadStoreWithCopyMemory message)
+    : message_(std::move(message)) {}
 
 TransformationReplaceLoadStoreWithCopyMemory::
     TransformationReplaceLoadStoreWithCopyMemory(
@@ -178,6 +177,11 @@ TransformationReplaceLoadStoreWithCopyMemory::ToMessage() const {
   protobufs::Transformation result;
   *result.mutable_replace_load_store_with_copy_memory() = message_;
   return result;
+}
+
+std::unordered_set<uint32_t>
+TransformationReplaceLoadStoreWithCopyMemory::GetFreshIds() const {
+  return std::unordered_set<uint32_t>();
 }
 
 }  // namespace fuzz

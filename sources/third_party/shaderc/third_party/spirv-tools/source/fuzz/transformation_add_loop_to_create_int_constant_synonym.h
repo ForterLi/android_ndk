@@ -22,8 +22,7 @@ namespace fuzz {
 class TransformationAddLoopToCreateIntConstantSynonym : public Transformation {
  public:
   explicit TransformationAddLoopToCreateIntConstantSynonym(
-      const protobufs::TransformationAddLoopToCreateIntConstantSynonym&
-          message);
+      protobufs::TransformationAddLoopToCreateIntConstantSynonym message);
 
   TransformationAddLoopToCreateIntConstantSynonym(
       uint32_t constant_id, uint32_t initial_val_id, uint32_t step_val_id,
@@ -45,6 +44,7 @@ class TransformationAddLoopToCreateIntConstantSynonym : public Transformation {
   // - |message_.block_after_loop_id| is the label of a block which has a single
   //   predecessor and which is not a merge block, a continue block or a loop
   //   header.
+  // - |message_.block_after_loop_id| must not be a dead block.
   // - |message_.additional_block_id| is either 0 or a valid fresh id, distinct
   //   from the other fresh ids.
   // - All of the other parameters are valid fresh ids.
@@ -56,6 +56,8 @@ class TransformationAddLoopToCreateIntConstantSynonym : public Transformation {
   // vector) constant. This id is marked as synonym with the original constant.
   void Apply(opt::IRContext* ir_context,
              TransformationContext* transformation_context) const override;
+
+  std::unordered_set<uint32_t> GetFreshIds() const override;
 
   protobufs::Transformation ToMessage() const override;
 

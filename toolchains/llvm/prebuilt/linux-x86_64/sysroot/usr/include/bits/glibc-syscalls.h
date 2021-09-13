@@ -120,6 +120,9 @@
 #if defined(__NR_close)
   #define SYS_close __NR_close
 #endif
+#if defined(__NR_close_range)
+  #define SYS_close_range __NR_close_range
+#endif
 #if defined(__NR_connect)
   #define SYS_connect __NR_connect
 #endif
@@ -158,6 +161,9 @@
 #endif
 #if defined(__NR_epoll_pwait)
   #define SYS_epoll_pwait __NR_epoll_pwait
+#endif
+#if defined(__NR_epoll_pwait2)
+  #define SYS_epoll_pwait2 __NR_epoll_pwait2
 #endif
 #if defined(__NR_epoll_wait)
   #define SYS_epoll_wait __NR_epoll_wait
@@ -501,6 +507,15 @@
 #if defined(__NR_kill)
   #define SYS_kill __NR_kill
 #endif
+#if defined(__NR_landlock_add_rule)
+  #define SYS_landlock_add_rule __NR_landlock_add_rule
+#endif
+#if defined(__NR_landlock_create_ruleset)
+  #define SYS_landlock_create_ruleset __NR_landlock_create_ruleset
+#endif
+#if defined(__NR_landlock_restrict_self)
+  #define SYS_landlock_restrict_self __NR_landlock_restrict_self
+#endif
 #if defined(__NR_lchown)
   #define SYS_lchown __NR_lchown
 #endif
@@ -599,6 +614,9 @@
 #endif
 #if defined(__NR_mount)
   #define SYS_mount __NR_mount
+#endif
+#if defined(__NR_mount_setattr)
+  #define SYS_mount_setattr __NR_mount_setattr
 #endif
 #if defined(__NR_move_mount)
   #define SYS_move_mount __NR_move_mount
@@ -776,6 +794,9 @@
 #endif
 #if defined(__NR_prlimit64)
   #define SYS_prlimit64 __NR_prlimit64
+#endif
+#if defined(__NR_process_madvise)
+  #define SYS_process_madvise __NR_process_madvise
 #endif
 #if defined(__NR_process_vm_readv)
   #define SYS_process_vm_readv __NR_process_vm_readv

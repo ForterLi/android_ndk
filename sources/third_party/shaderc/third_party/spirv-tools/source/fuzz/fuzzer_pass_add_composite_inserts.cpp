@@ -29,8 +29,6 @@ FuzzerPassAddCompositeInserts::FuzzerPassAddCompositeInserts(
     : FuzzerPass(ir_context, transformation_context, fuzzer_context,
                  transformations) {}
 
-FuzzerPassAddCompositeInserts::~FuzzerPassAddCompositeInserts() = default;
-
 void FuzzerPassAddCompositeInserts::Apply() {
   ForEachInstructionWithInstructionDescriptor(
       [this](opt::Function* function, opt::BasicBlock* block,
@@ -166,9 +164,8 @@ void FuzzerPassAddCompositeInserts::Apply() {
         // this type.
         uint32_t available_object_id;
         if (available_objects.empty()) {
-          auto current_node_type =
-              GetIRContext()->get_type_mgr()->GetType(current_node_type_id);
-          if (!fuzzerutil::CanCreateConstant(*current_node_type)) {
+          if (!fuzzerutil::CanCreateConstant(GetIRContext(),
+                                             current_node_type_id)) {
             return;
           }
           available_object_id =

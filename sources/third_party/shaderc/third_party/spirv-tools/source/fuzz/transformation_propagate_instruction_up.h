@@ -28,7 +28,7 @@ namespace fuzz {
 class TransformationPropagateInstructionUp : public Transformation {
  public:
   explicit TransformationPropagateInstructionUp(
-      const protobufs::TransformationPropagateInstructionUp& message);
+      protobufs::TransformationPropagateInstructionUp message);
 
   TransformationPropagateInstructionUp(
       uint32_t block_id,
@@ -58,6 +58,8 @@ class TransformationPropagateInstructionUp : public Transformation {
   // inserted copies.
   void Apply(opt::IRContext* ir_context,
              TransformationContext* transformation_context) const override;
+
+  std::unordered_set<uint32_t> GetFreshIds() const override;
 
   protobufs::Transformation ToMessage() const override;
 

@@ -27,9 +27,8 @@ const uint32_t kArithmeticInstructionIndexRightInOperand = 1;
 
 TransformationReplaceAddSubMulWithCarryingExtended::
     TransformationReplaceAddSubMulWithCarryingExtended(
-        const spvtools::fuzz::protobufs::
-            TransformationReplaceAddSubMulWithCarryingExtended& message)
-    : message_(message) {}
+        protobufs::TransformationReplaceAddSubMulWithCarryingExtended message)
+    : message_(std::move(message)) {}
 
 TransformationReplaceAddSubMulWithCarryingExtended::
     TransformationReplaceAddSubMulWithCarryingExtended(uint32_t struct_fresh_id,
@@ -226,6 +225,11 @@ TransformationReplaceAddSubMulWithCarryingExtended::ToMessage() const {
   protobufs::Transformation result;
   *result.mutable_replace_add_sub_mul_with_carrying_extended() = message_;
   return result;
+}
+
+std::unordered_set<uint32_t>
+TransformationReplaceAddSubMulWithCarryingExtended::GetFreshIds() const {
+  return {message_.struct_fresh_id()};
 }
 
 }  // namespace fuzz

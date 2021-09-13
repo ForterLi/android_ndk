@@ -21,8 +21,8 @@ namespace spvtools {
 namespace fuzz {
 
 TransformationReplaceIrrelevantId::TransformationReplaceIrrelevantId(
-    const protobufs::TransformationReplaceIrrelevantId& message)
-    : message_(message) {}
+    protobufs::TransformationReplaceIrrelevantId message)
+    : message_(std::move(message)) {}
 
 TransformationReplaceIrrelevantId::TransformationReplaceIrrelevantId(
     const protobufs::IdUseDescriptor& id_use_descriptor,
@@ -64,15 +64,27 @@ bool TransformationReplaceIrrelevantId::IsApplicable(
     return false;
   }
 
+  // The replacement id must not be the result of an OpFunction instruction.
+  if (replacement_id_def->opcode() == SpvOpFunction) {
+    return false;
+  }
+
   // Consistency check: an irrelevant id cannot be a pointer.
   assert(
       !ir_context->get_type_mgr()->GetType(type_id_of_interest)->AsPointer() &&
       "An irrelevant id cannot be a pointer");
 
+  uint32_t use_in_operand_index =
+      message_.id_use_descriptor().in_operand_index();
+
   // The id use must be replaceable with any other id of the same type.
-  if (!fuzzerutil::IdUseCanBeReplaced(
-          ir_context, use_instruction,
-          message_.id_use_descriptor().in_operand_index())) {
+  if (!fuzzerutil::IdUseCanBeReplaced(ir_context, transformation_context,
+                                      use_instruction, use_in_operand_index)) {
+    return false;
+  }
+
+  if (AttemptsToReplaceVariableInitializerWithNonConstant(
+          *use_instruction, *replacement_id_def)) {
     return false;
   }
 
@@ -95,15 +107,31 @@ void TransformationReplaceIrrelevantId::Apply(
       message_.id_use_descriptor().in_operand_index(),
       {message_.replacement_id()});
 
-  // Invalidate the analyses, since the usage of ids has been changed.
-  ir_context->InvalidateAnalysesExceptFor(
-      opt::IRContext::Analysis::kAnalysisNone);
+  ir_context->get_def_use_mgr()->EraseUseRecordsOfOperandIds(
+      instruction_to_change);
+  ir_context->get_def_use_mgr()->AnalyzeInstUse(instruction_to_change);
+
+  // No analyses need to be invalidated, since the transformation is local to a
+  // block, and the def-use analysis has been updated.
 }
 
 protobufs::Transformation TransformationReplaceIrrelevantId::ToMessage() const {
   protobufs::Transformation result;
   *result.mutable_replace_irrelevant_id() = message_;
   return result;
+}
+
+std::unordered_set<uint32_t> TransformationReplaceIrrelevantId::GetFreshIds()
+    const {
+  return std::unordered_set<uint32_t>();
+}
+
+bool TransformationReplaceIrrelevantId::
+    AttemptsToReplaceVariableInitializerWithNonConstant(
+        const opt::Instruction& use_instruction,
+        const opt::Instruction& replacement_for_use) {
+  return use_instruction.opcode() == SpvOpVariable &&
+         !spvOpcodeIsConstant(replacement_for_use.opcode());
 }
 
 }  // namespace fuzz

@@ -26,7 +26,7 @@ namespace fuzz {
 class TransformationReplaceIdWithSynonym : public Transformation {
  public:
   explicit TransformationReplaceIdWithSynonym(
-      const protobufs::TransformationReplaceIdWithSynonym& message);
+      protobufs::TransformationReplaceIdWithSynonym message);
 
   TransformationReplaceIdWithSynonym(
       protobufs::IdUseDescriptor id_use_descriptor, uint32_t synonymous_id);
@@ -47,6 +47,8 @@ class TransformationReplaceIdWithSynonym : public Transformation {
   // synonymous id identified by |message_.synonymous_id|.
   void Apply(opt::IRContext* ir_context,
              TransformationContext* transformation_context) const override;
+
+  std::unordered_set<uint32_t> GetFreshIds() const override;
 
   protobufs::Transformation ToMessage() const override;
 

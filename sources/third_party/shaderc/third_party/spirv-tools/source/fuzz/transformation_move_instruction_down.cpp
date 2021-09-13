@@ -38,8 +38,8 @@ std::string GetExtensionSet(opt::IRContext* ir_context,
 }  // namespace
 
 TransformationMoveInstructionDown::TransformationMoveInstructionDown(
-    const protobufs::TransformationMoveInstructionDown& message)
-    : message_(message) {}
+    protobufs::TransformationMoveInstructionDown message)
+    : message_(std::move(message)) {}
 
 TransformationMoveInstructionDown::TransformationMoveInstructionDown(
     const protobufs::InstructionDescriptor& instruction) {
@@ -723,6 +723,11 @@ bool TransformationMoveInstructionDown::CanSafelySwapInstructions(
 
   return IsMemoryReadInstruction(ir_context, a) ||
          IsMemoryReadInstruction(ir_context, b);
+}
+
+std::unordered_set<uint32_t> TransformationMoveInstructionDown::GetFreshIds()
+    const {
+  return std::unordered_set<uint32_t>();
 }
 
 }  // namespace fuzz

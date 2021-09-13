@@ -26,7 +26,7 @@ namespace fuzz {
 class TransformationAddConstantBoolean : public Transformation {
  public:
   explicit TransformationAddConstantBoolean(
-      const protobufs::TransformationAddConstantBoolean& message);
+      protobufs::TransformationAddConstantBoolean message);
 
   TransformationAddConstantBoolean(uint32_t fresh_id, bool is_true,
                                    bool is_irrelevant);
@@ -43,6 +43,8 @@ class TransformationAddConstantBoolean : public Transformation {
   //   is true.
   void Apply(opt::IRContext* ir_context,
              TransformationContext* transformation_context) const override;
+
+  std::unordered_set<uint32_t> GetFreshIds() const override;
 
   protobufs::Transformation ToMessage() const override;
 

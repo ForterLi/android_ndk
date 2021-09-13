@@ -22,9 +22,8 @@ namespace fuzz {
 
 TransformationMakeVectorOperationDynamic::
     TransformationMakeVectorOperationDynamic(
-        const spvtools::fuzz::protobufs::
-            TransformationMakeVectorOperationDynamic& message)
-    : message_(message) {}
+        protobufs::TransformationMakeVectorOperationDynamic message)
+    : message_(std::move(message)) {}
 
 TransformationMakeVectorOperationDynamic::
     TransformationMakeVectorOperationDynamic(uint32_t instruction_result_id,
@@ -105,6 +104,11 @@ bool TransformationMakeVectorOperationDynamic::IsVectorOperation(
   }
 
   return true;
+}
+
+std::unordered_set<uint32_t>
+TransformationMakeVectorOperationDynamic::GetFreshIds() const {
+  return std::unordered_set<uint32_t>();
 }
 
 }  // namespace fuzz

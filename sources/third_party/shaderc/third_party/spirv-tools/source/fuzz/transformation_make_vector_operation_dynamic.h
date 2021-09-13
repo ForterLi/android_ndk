@@ -26,7 +26,7 @@ namespace fuzz {
 class TransformationMakeVectorOperationDynamic : public Transformation {
  public:
   explicit TransformationMakeVectorOperationDynamic(
-      const protobufs::TransformationMakeVectorOperationDynamic& message);
+      protobufs::TransformationMakeVectorOperationDynamic message);
 
   TransformationMakeVectorOperationDynamic(uint32_t instruction_result_id,
                                            uint32_t constant_index_id);
@@ -45,6 +45,8 @@ class TransformationMakeVectorOperationDynamic : public Transformation {
   // OpVectorExtractDynamic and OpVectorInsertDynamic instructions.
   void Apply(opt::IRContext* ir_context,
              TransformationContext* transformation_context) const override;
+
+  std::unordered_set<uint32_t> GetFreshIds() const override;
 
   protobufs::Transformation ToMessage() const override;
 

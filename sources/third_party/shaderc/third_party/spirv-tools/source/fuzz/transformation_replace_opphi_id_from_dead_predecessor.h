@@ -23,8 +23,7 @@ namespace fuzz {
 class TransformationReplaceOpPhiIdFromDeadPredecessor : public Transformation {
  public:
   explicit TransformationReplaceOpPhiIdFromDeadPredecessor(
-      const protobufs::TransformationReplaceOpPhiIdFromDeadPredecessor&
-          message);
+      protobufs::TransformationReplaceOpPhiIdFromDeadPredecessor message);
 
   TransformationReplaceOpPhiIdFromDeadPredecessor(uint32_t opphi_id,
                                                   uint32_t pred_label_id,
@@ -44,6 +43,8 @@ class TransformationReplaceOpPhiIdFromDeadPredecessor : public Transformation {
   // the OpPhi instruction |message_.opphi_id|, with |message_.replacement_id|.
   void Apply(opt::IRContext* ir_context,
              TransformationContext* transformation_context) const override;
+
+  std::unordered_set<uint32_t> GetFreshIds() const override;
 
   protobufs::Transformation ToMessage() const override;
 
