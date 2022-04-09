@@ -13,7 +13,7 @@ Downloaded from: https://developer.android.com/ndk/downloads/index.html
 SHA1 of Linux 64-bit .zip: 9bad35f442caeda747780ba1dd92f2d98609d9cd
 
 Local Modifications:
-* Retained versions of dwp from r22 (removed in r23):
+* Retained versions of binutils objdump & dwp from r22 (removed in r23):
 
 Update instructions:
 1) Remove files:
@@ -21,10 +21,7 @@ rm -rf third_party/android_ndk/*
 2) Download new .zip and extract it
 3) Restore local modifications:
 git checkout -- README.chromium OWNERS BUILD.gn
-git checkout 401019bf85 \
-    toolchains/arm-linux-androideabi-4.9/prebuilt/linux-x86_64/bin/arm-linux-androideabi-dwp \
-    toolchains/aarch64-linux-android-4.9/prebuilt/linux-x86_64/bin/aarch64-linux-android-dwp \
-    toolchains/x86_64-4.9/prebuilt/linux-x86_64/bin/x86_64-linux-android-dwp \
-    toolchains/x86-4.9/prebuilt/linux-x86_64/bin/i686-linux-android-dwp
+git checkout 401019bf85 "**/*android*-dwp
+git checkout 401019bf85 "**/*android*-objdump
 4) Update this README.chromium
 5) Commit
